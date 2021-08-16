@@ -2,38 +2,22 @@
   <layout>
     <section class="container">
       <main class="main" ref="containerRef" />
-      <div class="status">
-        <div>
-          <p>Camera position</p>
-          <p>positionX: {{ cameraRef.position.x.toFixed(0) }}</p>
-          <p>positionY: {{ cameraRef.position.y.toFixed(0) }}</p>
-          <p>positionZ: {{ cameraRef.position.z.toFixed(0) }}</p>
-        </div>
-        <div>
-          <p>Camera rotation</p>
-          <p>
-            rotationX:
-            {{ ((cameraRef.rotation.x / Math.PI) * 180).toFixed(0) }}°
-          </p>
-          <p>
-            rotationY:
-            {{ ((cameraRef.rotation.y / Math.PI) * 180).toFixed(0) }}°
-          </p>
-          <p>
-            rotationZ:
-            {{ ((cameraRef.rotation.z / Math.PI) * 180).toFixed(0) }}°
-          </p>
-        </div>
-      </div>
     </section>
   </layout>
 </template>
 
 <script lang="ts">
-import { ref, shallowRef, onMounted, watchEffect, defineComponent } from "vue";
+import {
+  ref,
+  shallowRef,
+  onMounted,
+  watchEffect,
+  defineComponent,
+  reactive,
+} from "vue";
 import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as dat from "dat.gui";
 import { Layout } from "../components";
 
 export default defineComponent({
@@ -47,10 +31,6 @@ export default defineComponent({
       camera: null,
       renderer: null,
     });
-    const cameraRef = ref({
-      position: { x: 0, y: 0, z: 0 },
-      rotation: { x: 0, y: 0, z: 0 },
-    });
     // initialize scene/camera/renderer
     const initInstances = () => {
       const container = containerRef.value;
@@ -62,62 +42,28 @@ export default defineComponent({
         0.1,
         1000
       );
-      camera.position.set(0, 50, 100);
-      camera.lookAt(0, 0, 0);
+      camera.position.set(0, 0, 0);
+      camera.rotation.set(0, 0, 0);
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(offsetWidth, offsetHeight);
       renderer.setClearColor(0x222842, 1);
       container.appendChild(renderer.domElement);
       instanceRef.value = { scene, camera, renderer };
       interuptRef.value = false;
-      cameraRef.value = { ...camera };
-      window.scene = scene;
-      window.camera = camera;
-      window.renderer = renderer;
-    };
-    // initialize controls
-    const initControls = () => {
-      const { camera, renderer } = instanceRef.value;
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.addEventListener("change", () => {
-        cameraRef.value = { ...camera };
-      });
-      // 限制俯仰角
-      // controls.minPolarAngle = Math.PI * (60 / 180);
-      // controls.maxPolarAngle = Math.PI * (80 / 180);
-      // controls.maxPolarAngle = Math.PI * (90 / 180);
-      // 启用阻尼
-      // controls.enableDamping = true
-      // controls.dampingFactor = .01
-      // 监听按键
-      // controls.listenToKeyEvents(document.body);
-      // controls.keys = {
-      //   LEFT: "ArrowLeft", //left arrow
-      //   UP: "ArrowUp", // up arrow
-      //   RIGHT: "ArrowRight", // right arrow
-      //   BOTTOM: "ArrowDown", // down arrow
-      // };
-      // 监听鼠标
-      controls.mouseButtons = {
-        LEFT: THREE.MOUSE.ROTATE,
-        MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.ROTATE,
-        // RIGHT: THREE.MOUSE.PAN,
-      };
-      // 监听触摸
-      controls.touches = {
-        ONE: THREE.TOUCH.ROTATE,
-        TWO: THREE.TOUCH.DOLLY_PAN,
-      };
     };
     // initialize renferences
     const initReferences = () => {
       const { scene } = instanceRef.value;
-      const gridWidth = 100;
-      const grid = new THREE.GridHelper(gridWidth, 10);
-      scene.add(grid);
-      const axes = new THREE.AxesHelper(gridWidth / 2 + 5);
-      scene.add(axes);
+      const cube = new THREE.Mesh(
+        new THREE.SphereGeometry(50, 50, 50),
+        new THREE.MeshBasicMaterial({
+          color: 0xffff00,
+          transparent: true,
+          opacity: 0.2,
+          wireframe: true,
+        })
+      );
+      scene.add(cube);
       const createText = (text: string, color: number) => {
         var geometry = new THREE.TextGeometry(text, {
           font: new THREE.Font(FontJSON),
@@ -135,19 +81,35 @@ export default defineComponent({
         textObj.position.x = -geometry.boundingBox.max.x / 2;
         textObj.position.y = -geometry.boundingBox.max.y / 2;
         textObj.position.z = -geometry.boundingBox.max.z / 2;
-        return textObj;
+        const group = new THREE.Group();
+        group.add(textObj);
+        return group;
       };
-      const textX = createText("X", 0xff0000);
-      textX.position.x = gridWidth / 2 + 6;
-      const textY = createText("Y", 0xffff00);
-      textY.position.y = gridWidth / 2 + 6;
-      const textZ = createText("Z", 0x0000ff);
-      const wrappedTextZ = new THREE.Group();
-      wrappedTextZ.add(textZ);
-      wrappedTextZ.position.z +=
-        gridWidth / 2 + 6 + textZ.geometry.boundingBox.max.y / 2;
-      wrappedTextZ.rotation.x = -Math.PI / 2;
-      scene.add(textX, textY, wrappedTextZ);
+      const texts = [
+        createText("top", 0xff0000),
+        createText("front", 0xffa500),
+        createText("back", 0xffff00),
+        createText("left", 0x00ff00),
+        createText("right", 0x0000ff),
+        createText("bottom", 0xe0ffff),
+      ];
+      texts[0].position.set(0, 50, 0);
+      texts[0].rotation.set(Math.PI / 2, 0, 0);
+
+      texts[1].position.set(0, 0, -50);
+
+      texts[2].position.set(0, 0, 50);
+      texts[2].rotation.set(0, Math.PI, 0);
+
+      texts[3].position.set(-50, 0, 0);
+      texts[3].rotation.set(0, Math.PI / 2, 0);
+
+      texts[4].position.set(50, 0, 0);
+      texts[4].rotation.set(0, -Math.PI / 2, 0);
+
+      texts[5].position.set(0, -50, 0);
+      texts[5].rotation.set(-Math.PI / 2, 0, 0);
+      scene.add(...texts);
     };
     // render
     const render = () => {
@@ -173,19 +135,59 @@ export default defineComponent({
     onMounted(() => {
       watchEffect((onInvalidate) => {
         initInstances();
-        initControls();
         initReferences();
         update();
-        window.addEventListener('resize', handleResize);
+        window.addEventListener("resize", handleResize);
         onInvalidate(() => {
           interuptRef.value = true;
-          window.removeEventListener('resize', handleResize);
+          window.removeEventListener("resize", handleResize);
+        });
+      });
+    });
+    onMounted(() => {
+      watchEffect((onInvalidate) => {
+        const { camera } = instanceRef.value;
+        if (!camera) return;
+        const { rotation } = camera;
+        const { degToRad, radToDeg } = THREE.MathUtils;
+        const gui = new dat.GUI({ name: "My GUI" });
+        gui
+          .add(
+            { rotationX: Math.round(radToDeg(rotation.x)) },
+            "rotationX",
+            -180,
+            180
+          )
+          .onChange((value) => {
+            camera.rotation.x = degToRad(value);
+          });
+        gui
+          .add(
+            { rotationY: Math.round(radToDeg(rotation.x)) },
+            "rotationY",
+            -180,
+            180
+          )
+          .onChange((value) => {
+            camera.rotation.y = degToRad(value);
+          });
+        gui
+          .add(
+            { rotationZ: Math.round(radToDeg(rotation.x)) },
+            "rotationZ",
+            -180,
+            180
+          )
+          .onChange((value) => {
+            camera.rotation.z = degToRad(value);
+          });
+        onInvalidate(() => {
+          gui.destroy();
         });
       });
     });
     return {
       containerRef,
-      cameraRef,
     };
   },
 });

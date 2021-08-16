@@ -282,6 +282,11 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
+"@types/three@^0.131.0":
+  version "0.131.0"
+  resolved "https://registry.nlark.com/@types/three/download/@types/three-0.131.0.tgz#98f59887b05f71e665cf2fbdf04e0e4ceb9f89b6"
+  integrity sha1-mPWYh7BfceZlzy+98E4OTOufibY=
+
 "@vue/compiler-core@3.1.5":
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/@vue/compiler-core/-/compiler-core-3.1.5.tgz#298f905b6065d6d81ff63756f98c60876b393c87"
