@@ -34,6 +34,7 @@ import { ref, shallowRef, onMounted, watchEffect, defineComponent } from "vue";
 import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import Stats from "stats.js";
 import { Layout } from "../components";
 
 export default defineComponent({
@@ -149,10 +150,23 @@ export default defineComponent({
       wrappedTextZ.rotation.x = -Math.PI / 2;
       scene.add(textX, textY, wrappedTextZ);
     };
+    // initialize stats
+    const statsRef = shallowRef(null);
+    const initStats = () => {
+      const stats = new Stats();
+      stats.showPanel(0);
+      document.body.appendChild(stats.dom);
+      stats.dom.style.left = 'unset';
+      stats.dom.style.right = 0;
+      statsRef.value = stats;
+    };
     // render
     const render = () => {
+      const stats = statsRef.value;
+      stats.begin();
       const { scene, camera, renderer } = instanceRef.value;
       renderer.render(scene, camera);
+      stats.end();
     };
     // loop update
     const interuptRef = ref(false);
@@ -175,11 +189,14 @@ export default defineComponent({
         initInstances();
         initControls();
         initReferences();
+        initStats();
         update();
-        window.addEventListener('resize', handleResize);
+        window.addEventListener("resize", handleResize);
         onInvalidate(() => {
           interuptRef.value = true;
-          window.removeEventListener('resize', handleResize);
+          window.removeEventListener("resize", handleResize);
+          const stats = statsRef.value;
+          document.body.removeChild(stats.dom);
         });
       });
     });
