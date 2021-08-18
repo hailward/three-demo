@@ -117,8 +117,14 @@ export default defineComponent({
       const gridWidth = 100;
       const grid = new THREE.GridHelper(gridWidth, 10);
       scene.add(grid);
-      const axes = new THREE.AxesHelper(gridWidth / 2 + 5);
-      scene.add(axes);
+      // const axes = new THREE.AxesHelper(gridWidth / 2 + 5);
+      // scene.add(axes);
+      const arrows = [
+        new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0,0,0), gridWidth / 2 + 5, 0xff0000, 4),
+        new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0,0,0), gridWidth / 2 + 5, 0xffff00, 4),
+        new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0,0,0), gridWidth / 2 + 5, 0x0000ff, 4),
+      ];
+      scene.add(...arrows);
       const createText = (text: string, color: number) => {
         var geometry = new THREE.TextGeometry(text, {
           font: new THREE.Font(FontJSON),

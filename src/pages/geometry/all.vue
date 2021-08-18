@@ -13,7 +13,6 @@ import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "stats.js";
 import { Layout } from "../components";
-import { TubeGeometry } from "three";
 
 export default defineComponent({
   components: {

@@ -4,9 +4,7 @@
     :style="{ width: collapse ? '65px' : '' }"
   >
     <div class="title">
-      <div v-if="!collapse" style="flex: 1">
-        <i class="el-icon-menu" />
-        <span>&nbsp;&nbsp;</span>
+      <div v-if="!collapse" style="flex: 1; margin-left: 16px">
         <span>导航菜单</span>
       </div>
       <el-button
@@ -16,42 +14,67 @@
         :icon="collapse ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'"
       />
     </div>
-    <el-menu
-      text-color="#fff"
-      :collapse="collapse"
-      background-color="#545c64"
-      :default-active="defaultActive"
-    >
-      <el-menu-item index="/" @click="routerTo('/')">
-        <i class="el-icon-menu"></i>
-        <span class="menu-item-title">Home</span>
-      </el-menu-item>
-      <el-menu-item
-        index="/camera-with-gui"
-        @click="routerTo('/camera-with-gui')"
+    <el-scrollbar :max-height="scrollbarHeight">
+      <el-menu
+        text-color="#fff"
+        :collapse="collapse"
+        background-color="#545c64"
+        :default-active="defaultActive"
       >
-        <i class="el-icon-menu"></i>
-        <span class="menu-item-title">Camera with GUI</span>
-      </el-menu-item>
-      <el-menu-item
-        index="/geometries"
-        @click="routerTo('/geometries')"
-      >
-        <i class="el-icon-menu"></i>
-        <span class="menu-item-title">Geometries</span>
-      </el-menu-item>
-    </el-menu>
+        <template v-for="one in routes">
+          <el-submenu
+            v-if="one.children && one.children.length"
+            :key="one.path"
+            :index="one.path"
+            popper-class="sidebar-popper"
+          >
+            <template #title>
+              <i v-if="collapse" class="el-icon-menu"></i>
+              <span>{{ one.name }}</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item
+                v-for="two in one.children"
+                :key="`${one.path}/${two.path}`"
+                :index="`${one.path}/${two.path}`"
+                @click="router.push(`${one.path}/${two.path}`)"
+              >
+                {{ two.name }}
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-menu-item v-else :key="one.path" @click="router.push(one.path)">
+            <i v-if="collapse" class="el-icon-menu"></i>
+            <span v-else>{{ one.name }}</span>
+          </el-menu-item>
+        </template>
+      </el-menu>
+    </el-scrollbar>
   </el-aside>
 </template>
 
 <script>
-import { ref, watch, watchEffect } from "vue";
+import { onBeforeUnmount, onMounted, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
   setup() {
-    const collapse = ref(false);
+    const scrollbarHeight = ref("100px");
+    const getScrollbarHeight = () => {
+      const { offsetHeight } = document.body;
+      scrollbarHeight.value = `${offsetHeight - 56}px`;
+    };
+    onMounted(() => {
+      getScrollbarHeight();
+      window.addEventListener("resize", getScrollbarHeight);
+      onBeforeUnmount(() => {
+        window.removeEventListener("resize", getScrollbarHeight);
+      });
+    });
+
+    const collapse = ref(window.collapse || false);
     const toggleCollapse = () => {
-      collapse.value = !collapse.value;
+      window.collapse = !collapse.value;
+      collapse.value = window.collapse;
     };
     watch(collapse, () => {
       setTimeout(() => {
@@ -62,17 +85,19 @@ export default {
     const defaultActive = ref("");
     const route = useRoute();
     const router = useRouter();
-    const routerTo = (path) => {
-      router.push(path);
-    };
-    watchEffect(() => {
+    const {
+      options: { routes },
+    } = router;
+    onMounted(() => {
       defaultActive.value = route.path;
     });
     return {
+      scrollbarHeight,
       collapse,
       toggleCollapse,
       defaultActive,
-      routerTo,
+      router,
+      routes,
     };
   },
 };
@@ -80,11 +105,6 @@ export default {
 
 <style lang="scss" scoped>
 .el-aside {
-  &.collapsed {
-    .menu-item-title {
-      display: none;
-    }
-  }
   color: #fff;
   background-color: #545c64;
   overflow: hidden;
@@ -97,5 +117,12 @@ export default {
   .el-menu {
     border: none;
   }
+}
+</style>
+<style lang="scss">
+.sidebar-popper.el-popper {
+  border: none;
+  overflow: auto;
+  max-height: calc(100vh - 20px);
 }
 </style>
