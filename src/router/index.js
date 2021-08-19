@@ -16,6 +16,10 @@ const router = createRouter({
       component: Geometry,
       children: [
         {
+          path: 'overview',
+          name: '总览(Overview)',
+          component: Geometries.Overview,
+        }, {
           path: 'plane',
           name: '平面几何体(Plane)',
           component: Geometries.Plane,
@@ -75,6 +79,18 @@ const router = createRouter({
           path: 'text',
           name: '文本几何体(Text)',
           component: Geometries.Text,
+        }, {
+          path: 'shape',
+          name: '形状几何体(Shape)',
+          component: Geometries.Shape,
+        }, {
+          path: 'lathe',
+          name: '车削几何体(Lathe)',
+          component: Geometries.Lathe,
+        }, {
+          path: 'extrude',
+          name: '挤压几何体(Extrude)',
+          component: Geometries.Extrude,
         }
       ]
     }

@@ -120,9 +120,27 @@ export default defineComponent({
       // const axes = new THREE.AxesHelper(gridWidth / 2 + 5);
       // scene.add(axes);
       const arrows = [
-        new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0,0,0), gridWidth / 2 + 5, 0xff0000, 4),
-        new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0,0,0), gridWidth / 2 + 5, 0xffff00, 4),
-        new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0,0,0), gridWidth / 2 + 5, 0x0000ff, 4),
+        new THREE.ArrowHelper(
+          new THREE.Vector3(1, 0, 0),
+          new THREE.Vector3(0, 0, 0),
+          gridWidth / 2 + 5,
+          0xff0000,
+          4
+        ),
+        new THREE.ArrowHelper(
+          new THREE.Vector3(0, 1, 0),
+          new THREE.Vector3(0, 0, 0),
+          gridWidth / 2 + 5,
+          0xffff00,
+          4
+        ),
+        new THREE.ArrowHelper(
+          new THREE.Vector3(0, 0, 1),
+          new THREE.Vector3(0, 0, 0),
+          gridWidth / 2 + 5,
+          0x0000ff,
+          4
+        ),
       ];
       scene.add(...arrows);
       const createText = (text: string, color: number) => {
@@ -162,7 +180,7 @@ export default defineComponent({
       const stats = new Stats();
       stats.showPanel(0);
       document.body.appendChild(stats.dom);
-      stats.dom.style.left = 'unset';
+      stats.dom.style.left = "unset";
       stats.dom.style.right = 0;
       statsRef.value = stats;
     };
@@ -226,10 +244,12 @@ export default defineComponent({
   }
   .status {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 10px;
+    left: 10px;
     color: #fff;
     padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
   }
 }
 </style>

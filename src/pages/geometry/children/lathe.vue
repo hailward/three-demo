@@ -50,40 +50,42 @@ export default defineComponent({
       });
     });
     const paramsRef = ref({
-      tubularSegments: 50,
-      radius: 2,
-      radialSegments: 18,
-      closed: false,
-      // custom params
-      scaleX: 100,
-      scaleY: 20,
-      scaleZ: 20,
+      segments: 18,
+      phiStart: 0,
+      phiLength: Math.PI * 2,
+      // custom
+      func: "sin",
+      radialScale: 2,
+      radialSegments: 30,
     });
+    const getPoints = (func, radialScale, radialSegments) => {
+      const points = [];
+      const { degToRad } = THREE.MathUtils;
+      for (let i = 0; i <= 360; i += 360 / radialSegments) {
+        const rad = degToRad(i * 2);
+        const x = rad * radialScale;
+        const y = Math[func](rad) * radialScale;
+        points.push(new THREE.Vector2(x, y));
+      }
+      return points;
+    };
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
       const {
-        tubularSegments,
-        radius,
+        segments,
+        phiStart,
+        phiLength,
+        func,
+        radialScale,
         radialSegments,
-        closed,
-        scaleX,
-        scaleY,
-        scaleZ,
       } = paramsRef.value;
-      const path = new THREE.Curve<THREE.Vector3>();
-      path.getPoint = function (t) {
-        const tx = t * scaleX - scaleX / 2;
-        const ty = Math.sin(Math.PI * 4 * t) * scaleY;
-        const tz = Math.cos(Math.PI * 4 * t) * scaleZ;
-        return new THREE.Vector3(tx, ty, tz);
-      };
-      const geometry = new THREE.TubeGeometry(
-        path,
-        tubularSegments,
-        radius,
-        radialSegments,
-        closed
+      const points = getPoints(func, radialScale, radialSegments);
+      const geometry = new THREE.LatheGeometry(
+        points,
+        segments,
+        phiStart,
+        phiLength
       );
       const material = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
@@ -99,45 +101,41 @@ export default defineComponent({
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
       const {
-        tubularSegments,
-        radius,
+        segments,
+        phiStart,
+        phiLength,
+        func,
+        radialScale,
         radialSegments,
-        closed,
-        scaleX,
-        scaleY,
-        scaleZ,
       } = paramsRef.value;
       gui
-        .add({ tubularSegments }, "tubularSegments", 10, 100)
+        .add({ segments }, "segments", 3, 36)
         .step(1)
         .onChange((value) => {
-          paramsRef.value.tubularSegments = value;
+          paramsRef.value.segments = value;
         });
-      gui
-        .add({ radius }, "radius", 1, 10)
+      gui.add({ phiStart }, "phiStart", 0, Math.PI * 2).onChange((value) => {
+        paramsRef.value.phiStart = value;
+      });
+      gui.add({ phiLength }, "phiLength", 0, Math.PI * 2).onChange((value) => {
+        paramsRef.value.phiLength = value;
+      });
+      const customFolder = gui.addFolder("custom");
+      customFolder.add({ func }, "func", ["sin", "cos"]).onChange((value) => {
+        paramsRef.value.func = value;
+      });
+      customFolder
+        .add({ radialScale }, "radialScale", 1, 4)
         .step(1)
         .onChange((value) => {
-          paramsRef.value.radius = value;
+          paramsRef.value.radialScale = value;
         });
-      gui
-        .add({ radialSegments }, "radialSegments", 3, 36)
-        .step(1)
+      customFolder
+        .add({ radialSegments }, "radialSegments", 6, 60)
+        .step(6)
         .onChange((value) => {
           paramsRef.value.radialSegments = value;
         });
-      gui.add({ closed }, "closed").onChange((value) => {
-        paramsRef.value.closed = value;
-      });
-      const customFolder = gui.addFolder('custom');
-      customFolder.add({ scaleX }, "scaleX", 10, 100).onChange((value) => {
-        paramsRef.value.scaleX = value;
-      });
-      customFolder.add({ scaleY }, "scaleY", -20, 20).onChange((value) => {
-        paramsRef.value.scaleY = value;
-      });
-      customFolder.add({ scaleZ }, "scaleZ", -20, 20).onChange((value) => {
-        paramsRef.value.scaleZ = value;
-      });
       onBeforeUnmount(() => {
         gui.destroy();
       });

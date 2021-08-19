@@ -1,3 +1,4 @@
+export { default as Overview } from './overview.vue';
 export { default as Plane } from './plane.vue';
 export { default as Tetrahedron } from './tetrahedron.vue';
 export { default as Box } from './box.vue';
@@ -13,3 +14,6 @@ export { default as Torus } from './torus.vue';
 export { default as TorusKnot } from './torus-knot.vue';
 export { default as Tube } from './tube.vue';
 export { default as Text } from './text.vue';
+export { default as Shape } from './shape.vue';
+export { default as Lathe } from './lathe.vue';
+export { default as Extrude } from './extrude.vue';
