@@ -29,7 +29,7 @@
             popper-class="sidebar-popper"
           >
             <template #title>
-              <i v-if="collapse" class="el-icon-menu"></i>
+              <i v-if="collapse" class="el-icon-files" :title="one.name" />
               <span>{{ one.name }}</span>
             </template>
             <el-menu-item-group>
@@ -44,7 +44,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-menu-item v-else :key="one.path" @click="router.push(one.path)">
-            <i v-if="collapse" class="el-icon-menu"></i>
+            <i v-if="collapse" class="el-icon-position" :title="one.name" />
             <span v-else>{{ one.name }}</span>
           </el-menu-item>
         </template>

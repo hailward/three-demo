@@ -13,6 +13,7 @@ import {
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
+import { createGroup } from "@/utils/three";
 import { createInstances, createEdges } from "./common";
 
 export default defineComponent({
@@ -93,9 +94,10 @@ export default defineComponent({
       });
       const object = new THREE.Mesh(geometry, material);
       const edges = createEdges(geometry);
-      scene.add(object, edges);
+      const group = createGroup(object, edges);
+      scene.add(group);
       onInvalidate(() => {
-        scene.remove(object, edges);
+        scene.remove(group);
       });
     });
     onMounted(() => {

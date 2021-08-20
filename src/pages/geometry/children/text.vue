@@ -17,6 +17,7 @@ import * as THREE from "three";
 import * as dat from "dat.gui";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { createInstances, createEdges } from "./common";
+import { createGroup } from "@/utils/three";
 
 export default defineComponent({
   setup() {
@@ -77,8 +78,7 @@ export default defineComponent({
       });
       const object = new THREE.Mesh(geometry, material);
       const edges = createEdges(geometry);
-      const group = new THREE.Group();
-      group.add(object, edges);
+      const group = createGroup(object, edges);
       group.position.x = -geometry.boundingBox.max.x / 2;
       group.position.y = -geometry.boundingBox.max.y / 2;
       group.position.z = -geometry.boundingBox.max.z / 2;

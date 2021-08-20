@@ -14,6 +14,7 @@ import {
 import * as THREE from "three";
 import * as dat from "dat.gui";
 import { createInstances, createEdges } from "./common";
+import { createGroup } from "@/utils/three";
 
 export default defineComponent({
   setup() {
@@ -91,9 +92,10 @@ export default defineComponent({
       });
       const object = new THREE.Mesh(geometry, material);
       const edges = createEdges(geometry);
-      scene.add(object, edges);
+      const group = createGroup(object, edges);
+      scene.add(group);
       onInvalidate(() => {
-        scene.remove(object, edges);
+        scene.remove(group);
       });
     });
     onMounted(() => {

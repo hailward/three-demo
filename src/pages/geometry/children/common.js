@@ -47,4 +47,4 @@ export const createEdges = (geometry) => {
     color: 0xffffff,
   });
   return new THREE.LineSegments(edges, material);
-}
+};

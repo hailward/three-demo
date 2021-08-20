@@ -15,6 +15,8 @@ import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "stats.js";
+import { createGroup } from "@/utils/three";
+import { createEdges } from "./common";
 
 export default defineComponent({
   setup() {
@@ -214,14 +216,8 @@ export default defineComponent({
       geometries.push(extrude);
       // add to scene
       const groups = geometries.map((item, index) => {
-        const line = new THREE.LineSegments(
-          new THREE.EdgesGeometry(item.geometry),
-          new THREE.LineBasicMaterial({
-            color: 0xffffff,
-          })
-        );
-        const group = new THREE.Group();
-        group.add(item, line);
+        const line = createEdges(item.geometry);
+        const group = createGroup(item, line);
         group.position.set(
           100 *
             Math.cos((index / geometries.length) * Math.PI * 2 + Math.PI / 2),
@@ -231,8 +227,7 @@ export default defineComponent({
         );
         return group;
       });
-      const group = new THREE.Group();
-      group.add(...groups);
+      const group = createGroup(...groups);
       group.position.y = 20;
       groupRef.value = group;
       scene.add(group);
@@ -263,7 +258,6 @@ export default defineComponent({
     const render = () => {
       const stats = statsRef.value;
       stats.begin();
-      console.log(autoRotate.value);
       if (autoRotate.value) {
         const group = groupRef.value;
         group.rotation.y += 0.005;

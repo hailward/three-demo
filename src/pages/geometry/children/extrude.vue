@@ -14,6 +14,7 @@ import {
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
+import { createGroup } from "@/utils/three";
 import { createInstances, createEdges } from "./common";
 
 export default defineComponent({
@@ -87,8 +88,7 @@ export default defineComponent({
       });
       const object = new THREE.Mesh(geometry, material);
       const edges = createEdges(geometry);
-      const group = new THREE.Group();
-      group.add(object, edges);
+      const group = createGroup(object, edges);
       group.position.z = -options.depth / 2;
       scene.add(group);
       onInvalidate(() => {
