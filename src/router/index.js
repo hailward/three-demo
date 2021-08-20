@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '@/pages/home/index.vue';
 import Geometry from '@/pages/geometry/index.vue';
 import * as Geometries from '@/pages/geometry/children';
+import Helper from '@/pages/helper/index.vue';
+import * as Helpers from '@/pages/helper/children';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -91,6 +93,25 @@ const router = createRouter({
           path: 'extrude',
           name: '挤压几何体(Extrude)',
           component: Geometries.Extrude,
+        }
+      ]
+    }, {
+      path: '/helper',
+      name: '辅助对象(Helper)',
+      component: Helper,
+      children: [
+        {
+          path: 'grid',
+          name: '网格(Grid)',
+          component: Helpers.Grid,
+        }, {
+          path: 'arrow',
+          name: '箭头(Arrow)',
+          component: Helpers.Arrow,
+        }, {
+          path: 'box',
+          name: '箭头(Box)',
+          component: Helpers.Box,
         }
       ]
     }
