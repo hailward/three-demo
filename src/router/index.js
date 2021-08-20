@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import Home from '../pages/home/index.vue';
-import Geometry from '../pages/geometry/index.vue';
-import * as Geometries from '../pages/geometry/children';
+import Home from '@/pages/home/index.vue';
+import Geometry from '@/pages/geometry/index.vue';
+import * as Geometries from '@/pages/geometry/children';
 
 const router = createRouter({
   history: createWebHashHistory(),

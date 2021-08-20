@@ -30,7 +30,13 @@
 </template>
 
 <script lang="ts">
-import { ref, shallowRef, onMounted, watchEffect, defineComponent } from "vue";
+import {
+  ref,
+  shallowRef,
+  onMounted,
+  defineComponent,
+  onBeforeUnmount,
+} from "vue";
 import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -209,19 +215,17 @@ export default defineComponent({
       renderer.setSize(offsetWidth, offsetHeight);
     };
     onMounted(() => {
-      watchEffect((onInvalidate) => {
-        initInstances();
-        initControls();
-        initReferences();
-        initStats();
-        update();
-        window.addEventListener("resize", handleResize);
-        onInvalidate(() => {
-          interuptRef.value = true;
-          window.removeEventListener("resize", handleResize);
-          const stats = statsRef.value;
-          document.body.removeChild(stats.dom);
-        });
+      initInstances();
+      initControls();
+      initReferences();
+      initStats();
+      update();
+      window.addEventListener("resize", handleResize);
+      onBeforeUnmount(() => {
+        interuptRef.value = true;
+        window.removeEventListener("resize", handleResize);
+        const stats = statsRef.value;
+        document.body.removeChild(stats.dom);
       });
     });
     return {

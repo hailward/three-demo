@@ -3,7 +3,14 @@
 </template>
 
 <script lang="ts">
-import { ref, shallowRef, onMounted, watchEffect, defineComponent } from "vue";
+import {
+  ref,
+  shallowRef,
+  onMounted,
+  watchEffect,
+  defineComponent,
+  onBeforeUnmount,
+} from "vue";
 import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -240,12 +247,27 @@ export default defineComponent({
       stats.dom.style.right = 0;
       statsRef.value = stats;
     };
+    const autoRotate = ref(true);
+    onMounted(() => {
+      const container = containerRef.value;
+      const pointerdown = () => (autoRotate.value = false);
+      const pointerup = () => (autoRotate.value = true);
+      container.addEventListener("pointerdown", pointerdown);
+      container.addEventListener("pointerup", pointerup);
+      onBeforeUnmount(() => {
+        container.removeEventListener("pointerdown", pointerdown);
+        container.removeEventListener("pointerup", pointerup);
+      });
+    });
     // render
     const render = () => {
       const stats = statsRef.value;
       stats.begin();
-      const group = groupRef.value;
-      group.rotation.y += 0.005;
+      console.log(autoRotate.value);
+      if (autoRotate.value) {
+        const group = groupRef.value;
+        group.rotation.y += 0.005;
+      }
       const { scene, camera, renderer } = instanceRef.value;
       renderer.render(scene, camera);
       stats.end();
@@ -267,21 +289,19 @@ export default defineComponent({
       renderer.setSize(offsetWidth, offsetHeight);
     };
     onMounted(() => {
-      watchEffect((onInvalidate) => {
-        initInstances();
-        initLights();
-        initControls();
-        initReferences();
-        initGeometries();
-        initStats();
-        update();
-        window.addEventListener("resize", handleResize);
-        onInvalidate(() => {
-          interuptRef.value = true;
-          window.removeEventListener("resize", handleResize);
-          const stats = statsRef.value;
-          document.body.removeChild(stats.dom);
-        });
+      initInstances();
+      initLights();
+      initControls();
+      initReferences();
+      initGeometries();
+      initStats();
+      update();
+      window.addEventListener("resize", handleResize);
+      onBeforeUnmount(() => {
+        interuptRef.value = true;
+        window.removeEventListener("resize", handleResize);
+        const stats = statsRef.value;
+        document.body.removeChild(stats.dom);
       });
     });
     return {
