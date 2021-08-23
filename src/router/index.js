@@ -122,28 +122,33 @@ const router = createRouter({
       children: [
         {
           path: "grid",
-          name: "网格(Grid)",
+          name: "网格辅助对象(Grid)",
           component: Helpers.Grid,
         },
         {
           path: "arrow",
-          name: "箭头(Arrow)",
+          name: "箭头辅助对象(Arrow)",
           component: Helpers.Arrow,
         },
         {
           path: "box",
-          name: "箭头(Box)",
+          name: "包围盒辅助对象(Box)",
           component: Helpers.Box,
         },
         {
           path: "camera",
-          name: "相机(Camera)",
+          name: "相机辅助对象(Camera)",
           component: Helpers.Camera,
         },
         {
           path: "dirctional-light",
-          name: "平行光(DirectionalLight)",
+          name: "平行光辅助对象(DirectionalLight)",
           component: Helpers.DirectionalLight,
+        },
+        {
+          path: "polar",
+          name: "极坐标辅助对象(Polar)",
+          component: Helpers.Polar,
         },
       ],
     },

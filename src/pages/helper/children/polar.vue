@@ -24,16 +24,6 @@ export default defineComponent({
       camera: null,
       renderer: null,
     });
-    const createSphere = () => {
-      const { scene } = instanceRef.value;
-      const geometry = new THREE.SphereGeometry(10, 36, 18);
-      const material = new THREE.MeshPhongMaterial({
-        side: THREE.DoubleSide,
-        color: 0xccac00,
-      });
-      const sphere = new THREE.Mesh(geometry, material);
-      scene.add(sphere);
-    };
     const interuptRef = ref(false);
     const update = () => {
       const interupt = interuptRef.value;
@@ -52,8 +42,7 @@ export default defineComponent({
     };
     onMounted(() => {
       const container = containerRef.value;
-      instanceRef.value = createInstances(container);
-      createSphere();
+      instanceRef.value = createInstances(container, false);
       requestAnimationFrame(update);
       window.addEventListener("resize", handleResize);
       onBeforeUnmount(() => {
@@ -62,36 +51,32 @@ export default defineComponent({
       });
     });
     const params = reactive({
-      position: {
-        x: 0,
-        y: 10,
-        z: 50,
-      },
-      size: 10,
-      color: 0xffffff,
+      radius: 50,
+      radials: 18,
+      circles: 10,
+      divisions: 18,
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { position, size, color } = params;
-      console.log(position);
-      const light = new THREE.DirectionalLight(color);
-      light.position.set(position.x, position.y, position.z);
-      const helper = new THREE.DirectionalLightHelper(light, size);
-      scene.add(light, helper);
+      const { radius, radials, circles, divisions } = params;
+      const object = new THREE.PolarGridHelper(
+        radius,
+        radials,
+        circles,
+        divisions
+      );
+      scene.add(object);
       onInvalidate(() => {
-        scene.remove(light, helper);
+        scene.remove(object);
       });
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { position } = params;
-      const positionFolder = gui.addFolder("position");
-      positionFolder.add(position, "x", -50, 50).step(1);
-      positionFolder.add(position, "y", -50, 50).step(1);
-      positionFolder.add(position, "z", -50, 50).step(1);
-      gui.add(params, "size", 1, 20).step(1);
-      gui.addColor(params, "color");
+      gui.add(params, "radius", 10, 100).step(1);
+      gui.add(params, "radials", 3, 36).step(1);
+      gui.add(params, "circles", 1, 20).step(1);
+      gui.add(params, "divisions", 3, 36).step(1);
       onBeforeUnmount(() => {
         gui.destroy();
       });
