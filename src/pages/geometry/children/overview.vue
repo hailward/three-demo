@@ -2,7 +2,7 @@
   <main class="main" ref="containerRef" />
 </template>
 
-<script lang="ts">
+<script>
 import {
   ref,
   shallowRef,
@@ -54,7 +54,8 @@ export default defineComponent({
     // initialize controls
     const initControls = () => {
       const { camera, renderer } = instanceRef.value;
-      new OrbitControls(camera, renderer.domElement);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.autoRotate = false;
     };
     // initialize renferences
     const initReferences = () => {
@@ -148,7 +149,7 @@ export default defineComponent({
       const torusKnot = new THREE.Mesh(torusKnotGeometry, material);
       geometries.push(torusKnot);
       // tube: 管道几何体
-      const tubePath = new THREE.Curve<THREE.Vector3>();
+      const tubePath = new THREE.Curve();
       tubePath.getPoint = function (t) {
         const tx = t * 10 - 5;
         const ty = Math.sin(Math.PI * 4 * t) * 5;

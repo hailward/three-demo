@@ -19,18 +19,35 @@ export const createInstances = (container) => {
   renderer.setClearColor(0x222842, 1);
   container.appendChild(renderer.domElement);
   // controls
-  new OrbitControls(camera, renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.autoRotate = false;
   // helpers
   const grid = new THREE.GridHelper(100, 20);
   const arrows = [
-    new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0,0,0), 55, 0xff0000, 4),
-    new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0,0,0), 55, 0xffff00, 4),
-    new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0,0,0), 55, 0x0000ff, 4),
+    new THREE.ArrowHelper(
+      new THREE.Vector3(1, 0, 0),
+      new THREE.Vector3(0, 0, 0),
+      55,
+      0xff0000,
+      4
+    ),
+    new THREE.ArrowHelper(
+      new THREE.Vector3(0, 1, 0),
+      new THREE.Vector3(0, 0, 0),
+      55,
+      0xffff00,
+      4
+    ),
+    new THREE.ArrowHelper(
+      new THREE.Vector3(0, 0, 1),
+      new THREE.Vector3(0, 0, 0),
+      55,
+      0x0000ff,
+      4
+    ),
   ];
   // lights
-  const lights = [
-    new THREE.DirectionalLight(0xffffff, 1),
-  ];
+  const lights = [new THREE.DirectionalLight(0xffffff, 1)];
   lights[0].position.set(0, 100, 500);
   // add to scene
   scene.add(grid, ...arrows, ...lights);

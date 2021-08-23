@@ -2,7 +2,7 @@
   <main class="main" ref="containerRef" />
 </template>
 
-<script lang="ts">
+<script>
 import {
   ref,
   reactive,
@@ -73,7 +73,7 @@ export default defineComponent({
         scaleY,
         scaleZ,
       } = params;
-      const path = new THREE.Curve<THREE.Vector3>();
+      const path = new THREE.Curve();
       path.getPoint = function (t) {
         const tx = t * scaleX - scaleX / 2;
         const ty = Math.sin(Math.PI * 4 * t) * scaleY;

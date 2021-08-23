@@ -6,7 +6,7 @@
   </layout>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 import { Layout } from "../components";
 
@@ -17,7 +17,6 @@ export default defineComponent({
   setup() {},
 });
 </script>
-
 
 <style lang="scss" scoped>
 .container {

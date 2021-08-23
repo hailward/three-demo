@@ -29,7 +29,7 @@
   </layout>
 </template>
 
-<script lang="ts">
+<script>
 import {
   ref,
   shallowRef,
@@ -149,8 +149,8 @@ export default defineComponent({
         ),
       ];
       scene.add(...arrows);
-      const createText = (text: string, color: number) => {
-        var geometry = new THREE.TextGeometry(text, {
+      const createText = (text, color) => {
+        const geometry = new THREE.TextGeometry(text, {
           font: new THREE.Font(FontJSON),
           size: 5,
           height: 0.5,

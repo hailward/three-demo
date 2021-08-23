@@ -2,10 +2,9 @@
   <main class="main" ref="containerRef" />
 </template>
 
-<script lang="ts">
+<script>
 import {
   ref,
-  toRaw,
   reactive,
   onMounted,
   shallowRef,

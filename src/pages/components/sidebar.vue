@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { onBeforeUnmount, onMounted, ref, watch, watchEffect } from "vue";
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
   setup() {

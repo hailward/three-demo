@@ -2,7 +2,7 @@
   <main class="main" ref="containerRef" />
 </template>
 
-<script lang="ts">
+<script>
 import {
   ref,
   onMounted,
@@ -11,7 +11,6 @@ import {
   defineComponent,
   onBeforeUnmount,
   reactive,
-  toRaw,
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";

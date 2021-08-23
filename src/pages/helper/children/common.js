@@ -19,7 +19,8 @@ export const createInstances = (container, showGrid = true) => {
   renderer.setClearColor(0x222842, 1);
   container.appendChild(renderer.domElement);
   // controls
-  new OrbitControls(camera, renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.autoRotate = false;
   // helpers
   if (showGrid) {
     const grid = new THREE.GridHelper(100, 20);
