@@ -5,13 +5,14 @@
 <script lang="ts">
 import {
   ref,
+  toRaw,
+  markRaw,
   onMounted,
   shallowRef,
   watchEffect,
   defineComponent,
   onBeforeUnmount,
-  markRaw,
-  toRaw,
+  reactive,
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -53,7 +54,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       text: "Three.js",
       parameters: {
         font: markRaw(new THREE.Font(FontJSON)),
@@ -69,7 +70,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { text, parameters } = paramsRef.value;
+      const { text, parameters } = params;
       const geometry = new THREE.TextGeometry(text, parameters);
       geometry.computeBoundingBox();
       const material = new THREE.MeshPhongMaterial({
@@ -89,56 +90,15 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { text, parameters } = paramsRef.value;
-      const {
-        size,
-        height,
-        curveSegments,
-        bevelEnabled,
-        bevelThickness,
-        bevelSize,
-        bevelSegments,
-      } = toRaw(parameters);
-      gui.add({ text }, "text").onChange((value) => {
-        paramsRef.value.text = value;
-      });
-      gui
-        .add({ size }, "size", 1, 20)
-        .onChange((value) => {
-          parameters.size = value;
-        });
-      gui
-        .add({ height }, "height", 1, 10)
-        .onChange((value) => {
-          parameters.height = value;
-        });
-      gui
-        .add({ curveSegments }, "curveSegments", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          parameters.curveSegments = value;
-        });
-      gui.add({ bevelEnabled }, "bevelEnabled").onChange((value) => {
-        parameters.bevelEnabled = value;
-      });
-      gui
-        .add({ bevelThickness }, "bevelThickness", 0, 10)
-        .step(1)
-        .onChange((value) => {
-          parameters.bevelThickness = value;
-        });
-      gui
-        .add({ bevelSize }, "bevelSize", 0, 10)
-        .step(1)
-        .onChange((value) => {
-          parameters.bevelSize = value;
-        });
-      gui
-        .add({ bevelSegments }, "bevelSegments", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          parameters.bevelSegments = value;
-        });
+      const { parameters } = params;
+      gui.add(params, "text");
+      gui.add(parameters, "size", 1, 20);
+      gui.add(parameters, "height", 1, 10);
+      gui.add(parameters, "curveSegments", 1, 10).step(1);
+      gui.add(parameters, "bevelEnabled");
+      gui.add(parameters, "bevelThickness", 0, 10).step(1);
+      gui.add(parameters, "bevelSize", 0, 10).step(1);
+      gui.add(parameters, "bevelSegments", 1, 10).step(1);
       onBeforeUnmount(() => {
         gui.destroy();
       });

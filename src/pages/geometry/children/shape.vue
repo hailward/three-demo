@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,14 +51,14 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       scale: 10,
       segments: 30,
     });
     const getHeartShape = (scale, segments) => {
       const points = [];
       const { degToRad } = THREE.MathUtils;
-      for (let i = 0; i < 360; i += (360 / segments)) {
+      for (let i = 0; i < 360; i += 360 / segments) {
         const rad = degToRad(i);
         const x = (2 * Math.sin(rad) + Math.sin(2 * rad)) * scale;
         const y = -(2 * Math.cos(rad) + Math.cos(2 * rad)) * scale;
@@ -68,7 +69,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { scale, segments } = paramsRef.value;
+      const { scale, segments } = params;
       const shape = getHeartShape(scale, segments);
       const geometry = new THREE.ShapeGeometry(shape);
       const material = new THREE.MeshPhongMaterial({
@@ -85,19 +86,8 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { scale, segments } = paramsRef.value;
-      gui
-        .add({ scale }, "scale", 1, 20)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.scale = value;
-        });
-      gui
-        .add({ segments }, "segments", 6, 60)
-        .step(6)
-        .onChange((value) => {
-          paramsRef.value.segments = value;
-        });
+      gui.add(params, "scale", 1, 20).step(1);
+      gui.add(params, "segments", 6, 60).step(6);
       onBeforeUnmount(() => {
         gui.destroy();
       });

@@ -10,6 +10,8 @@ import {
   watchEffect,
   defineComponent,
   onBeforeUnmount,
+  reactive,
+  toRaw,
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -50,7 +52,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       radius: 25,
       height: 25,
       radialSegments: 18,
@@ -70,7 +72,7 @@ export default defineComponent({
         openEnded,
         thetaStart,
         thetaLength,
-      } = paramsRef.value;
+      } = params;
       const geometry = new THREE.ConeGeometry(
         radius,
         height,
@@ -94,52 +96,13 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const {
-        radius,
-        height,
-        radialSegments,
-        heightSegments,
-        openEnded,
-        thetaStart,
-        thetaLength,
-      } = paramsRef.value;
-      gui
-        .add({ radius }, "radius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radius = value;
-        });
-      gui
-        .add({ height }, "height", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.height = value;
-        });
-      gui
-        .add({ radialSegments }, "radialSegments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radialSegments = value;
-        });
-      gui
-        .add({ heightSegments }, "heightSegments", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.heightSegments = value;
-        });
-      gui.add({ openEnded }, "openEnded").onChange((value) => {
-        paramsRef.value.openEnded = value;
-      });
-      gui
-        .add({ thetaStart }, "thetaStart", 0, Math.PI * 2)
-        .onChange((value) => {
-          paramsRef.value.thetaStart = value;
-        });
-      gui
-        .add({ thetaLength }, "thetaLength", 0, Math.PI * 2)
-        .onChange((value) => {
-          paramsRef.value.thetaLength = value;
-        });
+      gui.add(params, "radius", 5, 50).step(1);
+      gui.add(params, "height", 5, 50).step(1);
+      gui.add(params, "radialSegments", 3, 36).step(1);
+      gui.add(params, "heightSegments", 1, 10).step(1);
+      gui.add(params, "openEnded");
+      gui.add(params, "thetaStart", 0, Math.PI * 2);
+      gui.add(params, "thetaLength", 0, Math.PI * 2);
       onBeforeUnmount(() => {
         gui.destroy();
       });

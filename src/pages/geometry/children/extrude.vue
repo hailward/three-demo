@@ -5,12 +5,13 @@
 <script lang="ts">
 import {
   ref,
+  toRaw,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
   defineComponent,
   onBeforeUnmount,
-  toRaw,
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -51,7 +52,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       options: {
         steps: 5,
         depth: 20,
@@ -79,7 +80,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { options, radialScale, radialSegments } = paramsRef.value;
+      const { options, radialScale, radialSegments } = params;
       const shape = getShape(radialScale, radialSegments);
       const geometry = new THREE.ExtrudeGeometry(shape, options);
       const material = new THREE.MeshPhongMaterial({
@@ -97,73 +98,17 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const {
-        options,
-        // custom
-        radialScale,
-        radialSegments,
-      } = paramsRef.value;
-      const {
-        steps,
-        depth,
-        bevelEnabled,
-        bevelThickness,
-        bevelSize,
-        bevelOffset,
-        bevelSegments,
-      } = toRaw(options);
-      gui
-        .add({ steps }, "steps", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          options.steps = value;
-        });
-      gui
-        .add({ depth }, "depth", 0, 100)
-        .step(1)
-        .onChange((value) => {
-          options.depth = value;
-        });
-      gui.add({ bevelEnabled }, "bevelEnabled").onChange((value) => {
-        options.bevelEnabled = value;
-      });
-      gui
-        .add({ bevelThickness }, "bevelThickness", 0, 100)
-        .step(1)
-        .onChange((value) => {
-          options.bevelThickness = value;
-        });
-      gui
-        .add({ bevelSize }, "bevelSize", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          options.bevelSize = value;
-        });
-      gui
-        .add({ bevelOffset }, "bevelOffset", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          options.bevelOffset = value;
-        });
-      gui
-        .add({ bevelSegments }, "bevelSegments", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          options.bevelSegments = value;
-        });
+      const { options } = params;
+      gui.add(options, "steps", 1, 10).step(1);
+      gui.add(options, "depth", 0, 100).step(1);
+      gui.add(options, "bevelEnabled");
+      gui.add(options, "bevelThickness", 0, 100).step(1);
+      gui.add(options, "bevelSize", -50, 50).step(1);
+      gui.add(options, "bevelOffset", -50, 50).step(1);
+      gui.add(options, "bevelSegments", 1, 10).step(1);
       const customFolder = gui.addFolder("custom");
-      customFolder
-        .add({ radialScale }, "radialScale", 1, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radialScale = value;
-        });
-      customFolder
-        .add({ radialSegments }, "radialSegments", 6, 36)
-        .step(6)
-        .onChange((value) => {
-          paramsRef.value.radialSegments = value;
-        });
+      customFolder.add(params, "radialScale", 1, 50).step(1);
+      customFolder.add(params, "radialSegments", 6, 36).step(6);
       onBeforeUnmount(() => {
         gui.destroy();
       });

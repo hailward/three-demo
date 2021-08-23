@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,7 +51,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       radius: 25,
       widthSegments: 18,
       heightSegments: 9,
@@ -58,7 +59,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { radius, widthSegments, heightSegments } = paramsRef.value;
+      const { radius, widthSegments, heightSegments } = params;
       const geometry = new THREE.SphereGeometry(
         radius,
         widthSegments,
@@ -78,25 +79,9 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { radius, widthSegments, heightSegments } = paramsRef.value;
-      gui
-        .add({ radius }, "radius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radius = value;
-        });
-      gui
-        .add({ widthSegments }, "widthSegments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.widthSegments = value;
-        });
-      gui
-        .add({ heightSegments }, "heightSegments", 2, 18)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.heightSegments = value;
-        });
+      gui.add(params, "radius", 5, 50).step(1);
+      gui.add(params, "widthSegments", 3, 36).step(1);
+      gui.add(params, "heightSegments", 2, 18).step(1);
       onBeforeUnmount(() => {
         gui.destroy();
       });

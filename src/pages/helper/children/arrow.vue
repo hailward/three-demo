@@ -5,13 +5,13 @@
 <script lang="ts">
 import {
   ref,
+  toRaw,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
   defineComponent,
   onBeforeUnmount,
-  toRaw,
-  reactive,
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -86,68 +86,19 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { dir, origin, length, hex, headLength, headWidth } = params;
-      const rawDir = { ...toRaw(dir) };
+      const { dir, origin } = params;
       const dirFolder = gui.addFolder("dir");
-      dirFolder
-        .add(rawDir, "x", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          dir.x = value;
-        });
-      dirFolder
-        .add(rawDir, "y", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          dir.y = value;
-        });
-      dirFolder
-        .add(rawDir, "z", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          dir.z = value;
-        });
-      const rawOrigin = { ...toRaw(origin) };
+      dirFolder.add(dir, "x", -50, 50).step(1);
+      dirFolder.add(dir, "y", -50, 50).step(1);
+      dirFolder.add(dir, "z", -50, 50).step(1);
       const originFolder = gui.addFolder("origin");
-      originFolder
-        .add(rawOrigin, "x", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          dir.x = value;
-        });
-      originFolder
-        .add(rawOrigin, "y", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          dir.y = value;
-        });
-      originFolder
-        .add(rawOrigin, "z", -50, 50)
-        .step(1)
-        .onChange((value) => {
-          dir.z = value;
-        });
-      gui
-        .add({ length }, "length", 1, 50)
-        .step(1)
-        .onChange((value) => {
-          params.length = value;
-        });
-      gui.addColor({ hex }, "hex").onChange((value) => {
-        params.hex = value;
-      });
-      gui
-        .add({ headLength }, "headLength", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          params.headLength = value;
-        });
-      gui
-        .add({ headWidth }, "headWidth", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          params.headWidth = value;
-        });
+      originFolder.add(origin, "x", -50, 50).step(1);
+      originFolder.add(origin, "y", -50, 50).step(1);
+      originFolder.add(origin, "z", -50, 50).step(1);
+      gui.add(params, "length", 1, 50).step(1);
+      gui.addColor(params, "hex");
+      gui.add(params, "headLength", 1, 10).step(1);
+      gui.add(params, "headWidth", 1, 10).step(1);
       onBeforeUnmount(() => {
         gui.destroy();
       });

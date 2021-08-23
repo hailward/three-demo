@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,7 +51,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       radius: 25,
       segments: 18,
       thetaStart: 0,
@@ -59,7 +60,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { radius, segments, thetaStart, thetaLength } = paramsRef.value;
+      const { radius, segments, thetaStart, thetaLength } = params;
       const geometry = new THREE.CircleGeometry(
         radius,
         segments,
@@ -80,29 +81,10 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { radius, segments, thetaStart, thetaLength } = paramsRef.value;
-      gui
-        .add({ radius }, "radius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radius = value;
-        });
-      gui
-        .add({ segments }, "segments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.segments = value;
-        });
-      gui
-        .add({ thetaStart }, "thetaStart", 0, Math.PI * 2)
-        .onChange((value) => {
-          paramsRef.value.thetaStart = value;
-        });
-      gui
-        .add({ thetaLength }, "thetaLength", 0, Math.PI * 2)
-        .onChange((value) => {
-          paramsRef.value.thetaLength = value;
-        });
+      gui.add(params, "radius", 5, 50).step(1);
+      gui.add(params, "segments", 3, 36).step(1);
+      gui.add(params, "thetaStart", 0, Math.PI * 2);
+      gui.add(params, "thetaLength", 0, Math.PI * 2);
       onBeforeUnmount(() => {
         gui.destroy();
       });

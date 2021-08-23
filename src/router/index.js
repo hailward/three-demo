@@ -112,6 +112,14 @@ const router = createRouter({
           path: 'box',
           name: '箭头(Box)',
           component: Helpers.Box,
+        }, {
+          path: 'camera',
+          name: '相机(Camera)',
+          component: Helpers.Camera,
+        }, {
+          path: 'dirctional-light',
+          name: '平行光(DirectionalLight)',
+          component: Helpers.DirectionalLight,
         }
       ]
     }

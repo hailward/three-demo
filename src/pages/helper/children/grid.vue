@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -49,7 +50,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       size: 100,
       divisions: 10,
       color1: 0x444444,
@@ -58,7 +59,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { size, divisions, color1, color2 } = paramsRef.value;
+      const { size, divisions, color1, color2 } = params;
       const object = new THREE.GridHelper(size, divisions, color1, color2);
       scene.add(object);
       onInvalidate(() => {
@@ -67,29 +68,10 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { size, divisions, color1, color2 } = paramsRef.value;
-      gui
-        .add({ size }, "size", 10, 100)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.size = value;
-        });
-      gui
-        .add({ divisions }, "divisions", 10, 100)
-        .step(2)
-        .onChange((value) => {
-          paramsRef.value.divisions = value;
-        });
-      gui
-        .addColor({ color1 }, "color1")
-        .onChange((value) => {
-          paramsRef.value.color1 = value;
-        });
-      gui
-        .addColor({ color2 }, "color2")
-        .onChange((value) => {
-          paramsRef.value.color2 = value;
-        });
+      gui.add(params, "size", 10, 100).step(1);
+      gui.add(params, "divisions", 10, 100).step(2);
+      gui.addColor(params, "color1");
+      gui.addColor(params, "color2");
       onBeforeUnmount(() => {
         gui.destroy();
       });

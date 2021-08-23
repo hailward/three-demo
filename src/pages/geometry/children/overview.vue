@@ -7,7 +7,6 @@ import {
   ref,
   shallowRef,
   onMounted,
-  watchEffect,
   defineComponent,
   onBeforeUnmount,
 } from "vue";

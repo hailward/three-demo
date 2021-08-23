@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,7 +51,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       width: 50,
       height: 50,
       depth: 50,
@@ -58,7 +59,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { width, height, depth } = paramsRef.value;
+      const { width, height, depth } = params;
       const geometry = new THREE.BoxGeometry(width, height, depth);
       const material = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
@@ -74,25 +75,9 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { width, height, depth } = paramsRef.value;
-      gui
-        .add({ width }, "width", 10, 100)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.width = value;
-        });
-      gui
-        .add({ height }, "height", 10, 100)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.height = value;
-        });
-      gui
-        .add({ depth }, "depth", 10, 100)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.depth = value;
-        });
+      gui.add(params, "width", 10, 100).step(1);
+      gui.add(params, "height", 10, 100).step(1);
+      gui.add(params, "depth", 10, 100).step(1);
       onBeforeUnmount(() => {
         gui.destroy();
       });

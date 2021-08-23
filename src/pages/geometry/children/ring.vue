@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,7 +51,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       innerRadius: 15,
       outerRadius: 25,
       thetaSegments: 18,
@@ -68,7 +69,7 @@ export default defineComponent({
         phiSegments,
         thetaStart,
         thetaLength,
-      } = paramsRef.value;
+      } = params;
       const geometry = new THREE.RingGeometry(
         innerRadius,
         outerRadius,
@@ -91,48 +92,12 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const {
-        innerRadius,
-        outerRadius,
-        thetaSegments,
-        phiSegments,
-        thetaStart,
-        thetaLength,
-      } = paramsRef.value;
-      gui
-        .add({ innerRadius }, "innerRadius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.innerRadius = value;
-        });
-      gui
-        .add({ outerRadius }, "outerRadius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.outerRadius = value;
-        });
-      gui
-        .add({ thetaSegments }, "thetaSegments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.thetaSegments = value;
-        });
-      gui
-        .add({ phiSegments }, "phiSegments", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.phiSegments = value;
-        });
-      gui
-        .add({ thetaStart }, "thetaStart", 0, Math.PI * 2)
-        .onChange((value) => {
-          paramsRef.value.thetaStart = value;
-        });
-      gui
-        .add({ thetaLength }, "thetaLength", 0, Math.PI * 2)
-        .onChange((value) => {
-          paramsRef.value.thetaLength = value;
-        });
+      gui.add(params, "innerRadius", 5, 50).step(1);
+      gui.add(params, "outerRadius", 5, 50).step(1);
+      gui.add(params, "thetaSegments", 3, 36).step(1);
+      gui.add(params, "phiSegments", 1, 10).step(1);
+      gui.add(params, "thetaStart", 0, Math.PI * 2);
+      gui.add(params, "thetaLength", 0, Math.PI * 2);
       onBeforeUnmount(() => {
         gui.destroy();
       });

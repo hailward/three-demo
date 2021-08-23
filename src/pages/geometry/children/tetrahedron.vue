@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,13 +51,13 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       radius: 25,
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { radius } = paramsRef.value;
+      const { radius } = params;
       const geometry = new THREE.TetrahedronGeometry(radius, 0);
       const material = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
@@ -72,13 +73,7 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { radius } = paramsRef.value;
-      gui
-        .add({ radius }, "radius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radius = value;
-        });
+      gui.add(params, "radius", 5, 50).step(1);
       onBeforeUnmount(() => {
         gui.destroy();
       });

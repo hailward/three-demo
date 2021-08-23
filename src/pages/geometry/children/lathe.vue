@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,7 +51,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       segments: 18,
       phiStart: 0,
       phiLength: Math.PI * 2,
@@ -80,7 +81,7 @@ export default defineComponent({
         func,
         radialScale,
         radialSegments,
-      } = paramsRef.value;
+      } = params;
       const points = getPoints(func, radialScale, radialSegments);
       const geometry = new THREE.LatheGeometry(
         points,
@@ -102,42 +103,13 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const {
-        segments,
-        phiStart,
-        phiLength,
-        func,
-        radialScale,
-        radialSegments,
-      } = paramsRef.value;
-      gui
-        .add({ segments }, "segments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.segments = value;
-        });
-      gui.add({ phiStart }, "phiStart", 0, Math.PI * 2).onChange((value) => {
-        paramsRef.value.phiStart = value;
-      });
-      gui.add({ phiLength }, "phiLength", 0, Math.PI * 2).onChange((value) => {
-        paramsRef.value.phiLength = value;
-      });
+      gui.add(params, "segments", 3, 36).step(1);
+      gui.add(params, "phiStart", 0, Math.PI * 2);
+      gui.add(params, "phiLength", 0, Math.PI * 2);
       const customFolder = gui.addFolder("custom");
-      customFolder.add({ func }, "func", ["sin", "cos"]).onChange((value) => {
-        paramsRef.value.func = value;
-      });
-      customFolder
-        .add({ radialScale }, "radialScale", 1, 4)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radialScale = value;
-        });
-      customFolder
-        .add({ radialSegments }, "radialSegments", 6, 60)
-        .step(6)
-        .onChange((value) => {
-          paramsRef.value.radialSegments = value;
-        });
+      customFolder.add(params, "func", ["sin", "cos"]);
+      customFolder.add(params, "radialScale", 1, 4).step(1);
+      customFolder.add(params, "radialSegments", 6, 60).step(6);
       onBeforeUnmount(() => {
         gui.destroy();
       });

@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,7 +51,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       radius: 25,
       tube: 5,
       radialSegments: 18,
@@ -60,8 +61,7 @@ export default defineComponent({
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { radius, tube, radialSegments, tubularSegments, arc } =
-        paramsRef.value;
+      const { radius, tube, radialSegments, tubularSegments, arc } = params;
       const geometry = new THREE.TorusGeometry(
         radius,
         tube,
@@ -83,35 +83,11 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { radius, tube, radialSegments, tubularSegments, arc } =
-        paramsRef.value;
-      gui
-        .add({ radius }, "radius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radius = value;
-        });
-      gui
-        .add({ tube }, "tube", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.tube = value;
-        });
-      gui
-        .add({ radialSegments }, "radialSegments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radialSegments = value;
-        });
-      gui
-        .add({ tubularSegments }, "tubularSegments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.tubularSegments = value;
-        });
-      gui.add({ arc }, "arc", 0, Math.PI * 2).onChange((value) => {
-        paramsRef.value.arc = value;
-      });
+      gui.add(params, "radius", 5, 50).step(1);
+      gui.add(params, "tube", 1, 10).step(1);
+      gui.add(params, "radialSegments", 3, 36).step(1);
+      gui.add(params, "tubularSegments", 3, 36).step(1);
+      gui.add(params, "arc", 0, Math.PI * 2);
       onBeforeUnmount(() => {
         gui.destroy();
       });

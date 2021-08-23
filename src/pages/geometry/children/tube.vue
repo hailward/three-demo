@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,7 +51,7 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       tubularSegments: 50,
       radius: 2,
       radialSegments: 18,
@@ -71,7 +72,7 @@ export default defineComponent({
         scaleX,
         scaleY,
         scaleZ,
-      } = paramsRef.value;
+      } = params;
       const path = new THREE.Curve<THREE.Vector3>();
       path.getPoint = function (t) {
         const tx = t * scaleX - scaleX / 2;
@@ -100,46 +101,14 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const {
-        tubularSegments,
-        radius,
-        radialSegments,
-        closed,
-        scaleX,
-        scaleY,
-        scaleZ,
-      } = paramsRef.value;
-      gui
-        .add({ tubularSegments }, "tubularSegments", 10, 100)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.tubularSegments = value;
-        });
-      gui
-        .add({ radius }, "radius", 1, 10)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radius = value;
-        });
-      gui
-        .add({ radialSegments }, "radialSegments", 3, 36)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radialSegments = value;
-        });
-      gui.add({ closed }, "closed").onChange((value) => {
-        paramsRef.value.closed = value;
-      });
-      const customFolder = gui.addFolder('custom');
-      customFolder.add({ scaleX }, "scaleX", 10, 100).onChange((value) => {
-        paramsRef.value.scaleX = value;
-      });
-      customFolder.add({ scaleY }, "scaleY", -20, 20).onChange((value) => {
-        paramsRef.value.scaleY = value;
-      });
-      customFolder.add({ scaleZ }, "scaleZ", -20, 20).onChange((value) => {
-        paramsRef.value.scaleZ = value;
-      });
+      gui.add(params, "tubularSegments", 10, 100).step(1);
+      gui.add(params, "radius", 1, 10).step(1);
+      gui.add(params, "radialSegments", 3, 36).step(1);
+      gui.add(params, "closed");
+      const customFolder = gui.addFolder("custom");
+      customFolder.add(params, "scaleX", 10, 100);
+      customFolder.add(params, "scaleY", -20, 20);
+      customFolder.add(params, "scaleZ", -20, 20);
       onBeforeUnmount(() => {
         gui.destroy();
       });

@@ -14,8 +14,7 @@ import {
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
-import { createInstances, createEdges } from "./common";
-import { createGroup } from "@/utils/three";
+import { createInstances } from "./common";
 
 export default defineComponent({
   setup() {
@@ -52,45 +51,36 @@ export default defineComponent({
       });
     });
     const params = reactive({
-      radius: 25,
-      tube: 5,
-      radialSegments: 50,
-      tubularSegments: 18,
-      p: 2,
-      q: 3,
+      position: {
+        x: 0,
+        y: 10,
+        z: 50,
+      },
+      size: 10,
+      color: 0xffffff,
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { radius, tube, radialSegments, tubularSegments, p, q } = params;
-      const geometry = new THREE.TorusKnotGeometry(
-        radius,
-        tube,
-        radialSegments,
-        tubularSegments,
-        p,
-        q
-      );
-      const material = new THREE.MeshPhongMaterial({
-        side: THREE.DoubleSide,
-        color: 0xccac00,
-      });
-      const object = new THREE.Mesh(geometry, material);
-      const edges = createEdges(geometry);
-      const group = createGroup(object, edges);
-      scene.add(group);
+      const { position, size, color } = params;
+      console.log(position);
+      const light = new THREE.DirectionalLight(color);
+      light.position.set(position.x, position.y, position.z);
+      const helper = new THREE.DirectionalLightHelper(light, size);
+      scene.add(light, helper);
       onInvalidate(() => {
-        scene.remove(group);
+        scene.remove(light, helper);
       });
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      gui.add(params, "radius", 5, 50).step(1);
-      gui.add(params, "tube", 1, 10).step(1);
-      gui.add(params, "radialSegments", 10, 100).step(1);
-      gui.add(params, "tubularSegments", 3, 36).step(1);
-      gui.add(params, "p", 1, 10).step(1);
-      gui.add(params, "q", 1, 9).step(1);
+      const { position } = params;
+      const positionFolder = gui.addFolder("position");
+      positionFolder.add(position, "x", -50, 50).step(1);
+      positionFolder.add(position, "y", -50, 50).step(1);
+      positionFolder.add(position, "z", -50, 50).step(1);
+      gui.add(params, "size", 1, 20).step(1);
+      gui.addColor(params, "color");
       onBeforeUnmount(() => {
         gui.destroy();
       });

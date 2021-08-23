@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   ref,
+  reactive,
   onMounted,
   shallowRef,
   watchEffect,
@@ -50,14 +51,14 @@ export default defineComponent({
         window.removeEventListener("resize", handleResize);
       });
     });
-    const paramsRef = ref({
+    const params = reactive({
       radius: 25,
       color: 0xffff00,
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { radius, color } = paramsRef.value;
+      const { radius, color } = params;
       const sphereGeometry = new THREE.SphereGeometry(radius, 36, 18);
       const sphereMaterial = new THREE.MeshBasicMaterial({
         color: 0xffff00,
@@ -75,16 +76,8 @@ export default defineComponent({
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { radius, color } = paramsRef.value;
-      gui
-        .add({ radius }, "radius", 5, 50)
-        .step(1)
-        .onChange((value) => {
-          paramsRef.value.radius = value;
-        });
-      gui.addColor({ color }, "color").onChange((value) => {
-        paramsRef.value.color = value;
-      });
+      gui.add(params, "radius", 5, 50).step(1);
+      gui.addColor(params, "color");
       onBeforeUnmount(() => {
         gui.destroy();
       });
