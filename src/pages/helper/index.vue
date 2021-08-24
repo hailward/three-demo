@@ -1,9 +1,9 @@
 <template>
-  <layout>
+  <Layout>
     <section class="container">
       <router-view></router-view>
     </section>
-  </layout>
+  </Layout>
 </template>
 
 <script>

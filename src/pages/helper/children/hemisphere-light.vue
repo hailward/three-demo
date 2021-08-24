@@ -64,19 +64,21 @@ export default defineComponent({
     const params = reactive({
       position: {
         x: 0,
-        y: 10,
-        z: 50,
+        y: 20,
+        z: 0,
       },
+      skyColor: 0xffffff,
+      groundColor: 0x000000,
+      intensity: 1,
       size: 10,
-      color: 0xffffff,
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { position, size, color } = params;
-      const light = new THREE.DirectionalLight(color);
+      const { position, skyColor, groundColor, intensity, size } = params;
+      const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
       light.position.set(position.x, position.y, position.z);
-      const helper = new THREE.DirectionalLightHelper(light, size);
+      const helper = new THREE.HemisphereLightHelper(light, size);
       scene.add(light, helper);
       onInvalidate(() => {
         scene.remove(light, helper);
@@ -89,8 +91,10 @@ export default defineComponent({
       positionFolder.add(position, "x", -50, 50).step(1);
       positionFolder.add(position, "y", -50, 50).step(1);
       positionFolder.add(position, "z", -50, 50).step(1);
+      gui.addColor(params, "skyColor");
+      gui.addColor(params, "groundColor");
+      gui.add(params, "intensity", 0, 1);
       gui.add(params, "size", 1, 20).step(1);
-      gui.addColor(params, "color");
       onBeforeUnmount(() => {
         gui.destroy();
       });

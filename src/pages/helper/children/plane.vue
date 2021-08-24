@@ -24,16 +24,6 @@ export default defineComponent({
       camera: null,
       renderer: null,
     });
-    const createSphere = () => {
-      const { scene } = instanceRef.value;
-      const geometry = new THREE.SphereGeometry(10, 36, 18);
-      const material = new THREE.MeshPhongMaterial({
-        side: THREE.DoubleSide,
-        color: 0xccac00,
-      });
-      const sphere = new THREE.Mesh(geometry, material);
-      scene.add(sphere);
-    };
     const interuptRef = ref(false);
     const update = () => {
       const interupt = interuptRef.value;
@@ -53,7 +43,6 @@ export default defineComponent({
     onMounted(() => {
       const container = containerRef.value;
       instanceRef.value = createInstances(container);
-      createSphere();
       requestAnimationFrame(update);
       window.addEventListener("resize", handleResize);
       onBeforeUnmount(() => {
@@ -62,34 +51,38 @@ export default defineComponent({
       });
     });
     const params = reactive({
-      position: {
+      dir: {
         x: 0,
-        y: 10,
-        z: 50,
+        y: 50,
+        z: 0,
       },
-      size: 10,
+      distance: 0,
+      size: 50,
       color: 0xffffff,
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
       if (!scene) return;
-      const { position, size, color } = params;
-      const light = new THREE.DirectionalLight(color);
-      light.position.set(position.x, position.y, position.z);
-      const helper = new THREE.DirectionalLightHelper(light, size);
-      scene.add(light, helper);
+      const { dir, distance, size, color } = params;
+      const plane = new THREE.Plane(
+        new THREE.Vector3(dir.x, dir.y, dir.z).normalize(),
+        distance
+      );
+      const helper = new THREE.PlaneHelper(plane, size, color);
+      scene.add(helper);
       onInvalidate(() => {
-        scene.remove(light, helper);
+        scene.remove(helper);
       });
     });
     onMounted(() => {
       const gui = new dat.GUI({ name: "My GUI" });
-      const { position } = params;
-      const positionFolder = gui.addFolder("position");
-      positionFolder.add(position, "x", -50, 50).step(1);
-      positionFolder.add(position, "y", -50, 50).step(1);
-      positionFolder.add(position, "z", -50, 50).step(1);
-      gui.add(params, "size", 1, 20).step(1);
+      const { dir } = params;
+      const dirFolder = gui.addFolder("dir");
+      dirFolder.add(dir, "x", -50, 50).step(1);
+      dirFolder.add(dir, "y", -50, 50).step(1);
+      dirFolder.add(dir, "z", -50, 50).step(1);
+      gui.add(params, "distance", -50, 50).step(1);
+      gui.add(params, "size", 10, 100).step(1);
       gui.addColor(params, "color");
       onBeforeUnmount(() => {
         gui.destroy();

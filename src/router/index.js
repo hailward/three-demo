@@ -150,6 +150,16 @@ const router = createRouter({
           name: "极坐标辅助对象(Polar)",
           component: Helpers.Polar,
         },
+        {
+          path: "hemisphere-light",
+          name: "半球光辅助对象(HemisphereLight)",
+          component: Helpers.HemisphereLight,
+        },
+        {
+          path: "plane",
+          name: "平面辅助对象(Plane)",
+          component: Helpers.Plane,
+        },
       ],
     },
   ],

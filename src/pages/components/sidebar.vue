@@ -1,62 +1,64 @@
 <template>
-  <el-aside
-    :class="collapse ? 'collapsed' : ''"
-    :style="{ width: collapse ? '65px' : '' }"
-  >
-    <div class="title">
-      <div v-if="!collapse" style="flex: 1; margin-left: 16px">
-        <span>导航菜单</span>
+  <template v-if="fixed">
+    <el-button
+      circle
+      @click="toggleDrawer"
+      icon="el-icon-d-arrow-left"
+      style="position: fixed; right: 20px; bottom: 20px; z-index: 1"
+    />
+    <el-drawer v-model="drawer" :with-header="false" size="80%">
+      <div class="el-drawer-title">
+        <div style="flex: 1; margin-left: 16px">
+          <span>导航菜单</span>
+        </div>
+        <el-button
+          circle
+          type="text"
+          @click="toggleDrawer"
+          icon="el-icon-d-arrow-right"
+        />
       </div>
-      <el-button
-        circle
-        type="text"
-        @click="toggleCollapse"
-        :icon="collapse ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'"
-      />
-    </div>
-    <el-scrollbar :max-height="scrollbarHeight">
-      <el-menu
-        text-color="#fff"
-        :collapse="collapse"
-        background-color="#545c64"
-        :default-active="defaultActive"
-      >
-        <template v-for="one in routes">
-          <el-submenu
-            v-if="one.children && one.children.length"
-            :key="one.path"
-            :index="one.path"
-            popper-class="sidebar-popper"
-          >
-            <template #title>
-              <i v-if="collapse" class="el-icon-files" :title="one.name" />
-              <span>{{ one.name }}</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item
-                v-for="two in one.children"
-                :key="`${one.path}/${two.path}`"
-                :index="`${one.path}/${two.path}`"
-                @click="router.push(`${one.path}/${two.path}`)"
-              >
-                {{ two.name }}
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-menu-item v-else :key="one.path" @click="router.push(one.path)">
-            <i v-if="collapse" class="el-icon-position" :title="one.name" />
-            <span v-else>{{ one.name }}</span>
-          </el-menu-item>
-        </template>
-      </el-menu>
-    </el-scrollbar>
-  </el-aside>
+      <el-scrollbar :max-height="scrollbarHeight">
+        <Menu />
+      </el-scrollbar>
+    </el-drawer>
+  </template>
+  <template v-else>
+    <el-aside
+      :class="collapse ? 'collapsed' : ''"
+      :style="{ width: collapse ? '65px' : '' }"
+    >
+      <div class="el-aside-title">
+        <div v-if="!collapse" style="flex: 1; margin-left: 16px">
+          <span>导航菜单</span>
+        </div>
+        <el-button
+          circle
+          type="text"
+          @click="toggleCollapse"
+          :icon="collapse ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'"
+        />
+      </div>
+      <el-scrollbar :max-height="scrollbarHeight">
+        <Menu :collapse="collapse" />
+      </el-scrollbar>
+    </el-aside>
+  </template>
 </template>
 
 <script>
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import Menu from "./menu.vue";
 export default {
+  props: {
+    fixed: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  components: {
+    Menu,
+  },
   setup() {
     const scrollbarHeight = ref("100px");
     const getScrollbarHeight = () => {
@@ -71,48 +73,60 @@ export default {
       });
     });
 
-    const collapse = ref(window.collapse || false);
+    const drawer = ref(false);
+    const toggleDrawer = () => {
+      drawer.value = !drawer.value;
+    };
+    const collapse = ref(window.SIDEBAR_COLLAPSE || false);
     const toggleCollapse = () => {
-      window.collapse = !collapse.value;
-      collapse.value = window.collapse;
+      window.SIDEBAR_COLLAPSE = !collapse.value;
+      collapse.value = window.SIDEBAR_COLLAPSE;
     };
     watch(collapse, () => {
       setTimeout(() => {
         window.dispatchEvent(new Event("resize"));
       });
     });
-
-    const defaultActive = ref("");
-    const route = useRoute();
-    const router = useRouter();
-    const {
-      options: { routes },
-    } = router;
-    onMounted(() => {
-      defaultActive.value = route.path;
-    });
     return {
       scrollbarHeight,
+      drawer,
+      toggleDrawer,
       collapse,
       toggleCollapse,
-      defaultActive,
-      router,
-      routes,
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.el-aside {
-  color: #fff;
-  background-color: #545c64;
-  overflow: hidden;
-  .title {
+.el-drawer {
+  &-title {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 8px;
+    color: #fff;
+    background-color: #545c64;
+  }
+  .el-scrollbar {
+    background-color: #545c64;
+  }
+  .el-menu {
+    border: none;
+  }
+}
+.el-aside {
+  overflow: hidden;
+  &-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    color: #fff;
+    background-color: #545c64;
+  }
+  .el-scrollbar {
+    background-color: #545c64;
   }
   .el-menu {
     border: none;
