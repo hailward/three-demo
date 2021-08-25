@@ -160,6 +160,11 @@ const router = createRouter({
           name: "平面辅助对象(Plane)",
           component: Helpers.Plane,
         },
+        {
+          path: "point-light",
+          name: "点光源辅助对象(PointLight)",
+          component: Helpers.PointLight,
+        },
       ],
     },
   ],

@@ -6,3 +6,4 @@ export { default as DirectionalLight } from "./directional-light.vue";
 export { default as Polar } from "./polar.vue";
 export { default as HemisphereLight } from "./hemisphere-light.vue";
 export { default as Plane } from "./plane.vue";
+export { default as PointLight } from "./point-light.vue";
