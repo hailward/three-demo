@@ -53,11 +53,11 @@ export default {
   props: {
     fixed: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   components: {
-    Menu,
+    Menu
   },
   setup() {
     const scrollbarHeight = ref("100px");
@@ -92,9 +92,9 @@ export default {
       drawer,
       toggleDrawer,
       collapse,
-      toggleCollapse,
+      toggleCollapse
     };
-  },
+  }
 };
 </script>
 

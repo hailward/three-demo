@@ -10,7 +10,7 @@ import {
   shallowRef,
   watchEffect,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -23,7 +23,7 @@ export default defineComponent({
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     const interuptRef = ref(false);
     const update = () => {
@@ -59,11 +59,11 @@ export default defineComponent({
         bevelThickness: 1,
         bevelSize: 1,
         bevelOffset: 0,
-        bevelSegments: 1,
+        bevelSegments: 1
       },
       // custom
       radialScale: 10,
-      radialSegments: 18,
+      radialSegments: 18
     });
     const getShape = (radialScale, radialSegments) => {
       const points = [];
@@ -84,7 +84,7 @@ export default defineComponent({
       const geometry = new THREE.ExtrudeGeometry(shape, options);
       const material = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
-        color: 0xccac00,
+        color: 0xccac00
       });
       const object = new THREE.Mesh(geometry, material);
       const edges = createEdges(geometry);
@@ -113,8 +113,8 @@ export default defineComponent({
       });
     });
     return {
-      containerRef,
+      containerRef
     };
-  },
+  }
 });
 </script>

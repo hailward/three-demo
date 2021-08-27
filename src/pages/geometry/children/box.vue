@@ -10,7 +10,7 @@ import {
   shallowRef,
   watchEffect,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -23,7 +23,7 @@ export default defineComponent({
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     const interuptRef = ref(false);
     const update = () => {
@@ -54,7 +54,7 @@ export default defineComponent({
     const params = reactive({
       width: 50,
       height: 50,
-      depth: 50,
+      depth: 50
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
@@ -63,7 +63,7 @@ export default defineComponent({
       const geometry = new THREE.BoxGeometry(width, height, depth);
       const material = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
-        color: 0xccac00,
+        color: 0xccac00
       });
       const object = new THREE.Mesh(geometry, material);
       const edges = createEdges(geometry);
@@ -83,8 +83,8 @@ export default defineComponent({
       });
     });
     return {
-      containerRef,
+      containerRef
     };
-  },
+  }
 });
 </script>

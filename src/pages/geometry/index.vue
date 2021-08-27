@@ -12,9 +12,9 @@ import { Layout } from "../components";
 
 export default defineComponent({
   components: {
-    Layout,
+    Layout
   },
-  setup() {},
+  setup() {}
 });
 </script>
 

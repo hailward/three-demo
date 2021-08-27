@@ -42,15 +42,15 @@ export default {
   props: {
     collapse: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   setup() {
     const defaultActive = ref("");
     const route = useRoute();
     const router = useRouter();
     const {
-      options: { routes },
+      options: { routes }
     } = router;
     onMounted(() => {
       defaultActive.value = route.path;
@@ -58,8 +58,8 @@ export default {
     return {
       defaultActive,
       router,
-      routes,
+      routes
     };
-  },
+  }
 };
 </script>

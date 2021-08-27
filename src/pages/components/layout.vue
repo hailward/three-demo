@@ -12,7 +12,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 import SideBar from "./sidebar.vue";
 export default {
   components: {
-    SideBar,
+    SideBar
   },
   setup() {
     const scrollbarHeight = ref("100px");
@@ -49,9 +49,9 @@ export default {
     });
     return {
       scrollbarHeight,
-      fixed,
+      fixed
     };
-  },
+  }
 };
 </script>
 

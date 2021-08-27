@@ -10,7 +10,7 @@ import {
   shallowRef,
   watchEffect,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -22,7 +22,7 @@ export default defineComponent({
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     const interuptRef = ref(false);
     const update = () => {
@@ -54,7 +54,7 @@ export default defineComponent({
       size: 100,
       divisions: 10,
       color1: 0x444444,
-      color2: 0x888888,
+      color2: 0x888888
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
@@ -77,8 +77,8 @@ export default defineComponent({
       });
     });
     return {
-      containerRef,
+      containerRef
     };
-  },
+  }
 });
 </script>

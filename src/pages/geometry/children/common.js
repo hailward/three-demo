@@ -44,7 +44,7 @@ export const createInstances = (container) => {
       55,
       0x0000ff,
       4
-    ),
+    )
   ];
   // lights
   const lights = [new THREE.DirectionalLight(0xffffff, 1)];
@@ -54,14 +54,14 @@ export const createInstances = (container) => {
   return {
     scene,
     camera,
-    renderer,
+    renderer
   };
 };
 // 创建边界线
 export const createEdges = (geometry) => {
   const edges = new THREE.EdgesGeometry(geometry);
   const material = new THREE.LineBasicMaterial({
-    color: 0xffffff,
+    color: 0xffffff
   });
   return new THREE.LineSegments(edges, material);
 };

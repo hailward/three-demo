@@ -10,7 +10,7 @@ import {
   shallowRef,
   watchEffect,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -23,7 +23,7 @@ export default defineComponent({
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     const interuptRef = ref(false);
     const update = () => {
@@ -53,7 +53,7 @@ export default defineComponent({
     });
     const params = reactive({
       radius: 25,
-      color: 0xffff00,
+      color: 0xffff00
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
@@ -64,7 +64,7 @@ export default defineComponent({
         color: 0xffff00,
         wireframe: true,
         transparent: true,
-        opacity: 0.2,
+        opacity: 0.2
       });
       const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
       const object = new THREE.BoxHelper(sphere, color);
@@ -83,8 +83,8 @@ export default defineComponent({
       });
     });
     return {
-      containerRef,
+      containerRef
     };
-  },
+  }
 });
 </script>

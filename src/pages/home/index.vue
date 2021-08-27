@@ -35,7 +35,7 @@ import {
   shallowRef,
   onMounted,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
@@ -45,18 +45,18 @@ import { Layout } from "../components";
 
 export default defineComponent({
   components: {
-    Layout,
+    Layout
   },
   setup() {
     const containerRef = ref(null);
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     const cameraRef = ref({
       position: { x: 0, y: 0, z: 0 },
-      rotation: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 }
     });
     // initialize scene/camera/renderer
     const initInstances = () => {
@@ -108,13 +108,13 @@ export default defineComponent({
       controls.mouseButtons = {
         LEFT: THREE.MOUSE.ROTATE,
         MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.ROTATE,
+        RIGHT: THREE.MOUSE.ROTATE
         // RIGHT: THREE.MOUSE.PAN,
       };
       // 监听触摸
       controls.touches = {
         ONE: THREE.TOUCH.ROTATE,
-        TWO: THREE.TOUCH.DOLLY_PAN,
+        TWO: THREE.TOUCH.DOLLY_PAN
       };
     };
     // initialize renferences
@@ -146,14 +146,14 @@ export default defineComponent({
           gridWidth / 2 + 5,
           0x0000ff,
           4
-        ),
+        )
       ];
       scene.add(...arrows);
       const createText = (text, color) => {
         const geometry = new THREE.TextGeometry(text, {
           font: new THREE.Font(FontJSON),
           size: 5,
-          height: 0.5,
+          height: 0.5
           // curveSegments: 12,
           // bevelEnabled: true,
           // bevelThickness: 10,
@@ -230,9 +230,9 @@ export default defineComponent({
     });
     return {
       containerRef,
-      cameraRef,
+      cameraRef
     };
-  },
+  }
 });
 </script>
 

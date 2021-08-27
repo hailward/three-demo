@@ -8,7 +8,7 @@ import {
   shallowRef,
   onMounted,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
@@ -23,7 +23,7 @@ export default defineComponent({
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     // initialize scene/camera/renderer
     const initInstances = () => {
@@ -84,7 +84,7 @@ export default defineComponent({
           gridWidth / 2 + 5,
           0x0000ff,
           4
-        ),
+        )
       ];
       scene.add(...arrows);
     };
@@ -93,7 +93,7 @@ export default defineComponent({
       const { scene } = instanceRef.value;
       const material = new THREE.MeshPhongMaterial({
         color: 0xccac00,
-        side: THREE.DoubleSide,
+        side: THREE.DoubleSide
       });
       const geometries = [];
       // plane: 平面几何体
@@ -168,7 +168,7 @@ export default defineComponent({
         bevelEnabled: true,
         bevelThickness: 0.1,
         bevelSize: 0.1,
-        bevelSegments: 1,
+        bevelSegments: 1
       });
       const text = new THREE.Mesh(textGeometry, material);
       geometries.push(text);
@@ -206,7 +206,7 @@ export default defineComponent({
         bevelThickness: 1,
         bevelSize: 1,
         bevelOffset: 0,
-        bevelSegments: 1,
+        bevelSegments: 1
       };
       const extrudeGeometry = new THREE.ExtrudeGeometry(
         extrudeShape,
@@ -299,8 +299,8 @@ export default defineComponent({
       });
     });
     return {
-      containerRef,
+      containerRef
     };
-  },
+  }
 });
 </script>

@@ -10,7 +10,7 @@ import {
   shallowRef,
   watchEffect,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import * as dat from "dat.gui";
@@ -22,14 +22,14 @@ export default defineComponent({
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     const createSphere = () => {
       const { scene } = instanceRef.value;
       const geometry = new THREE.SphereGeometry(10, 36, 18);
       const material = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
-        color: 0xccac00,
+        color: 0xccac00
       });
       const sphere = new THREE.Mesh(geometry, material);
       scene.add(sphere);
@@ -65,12 +65,12 @@ export default defineComponent({
       position: {
         x: 0,
         y: 20,
-        z: 0,
+        z: 0
       },
       skyColor: 0xffffff,
       groundColor: 0x000000,
       intensity: 1,
-      size: 10,
+      size: 10
     });
     watchEffect((onInvalidate) => {
       const { scene } = instanceRef.value;
@@ -100,8 +100,8 @@ export default defineComponent({
       });
     });
     return {
-      containerRef,
+      containerRef
     };
-  },
+  }
 });
 </script>

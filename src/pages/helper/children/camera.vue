@@ -8,7 +8,7 @@ import {
   onMounted,
   shallowRef,
   defineComponent,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from "vue";
 import * as THREE from "three";
 import { createInstances } from "./common";
@@ -19,7 +19,7 @@ export default defineComponent({
     const instanceRef = shallowRef({
       scene: null,
       camera: null,
-      renderer: null,
+      renderer: null
     });
     const createCameraHelper = () => {
       const { scene, camera } = instanceRef.value;
@@ -54,8 +54,8 @@ export default defineComponent({
       });
     });
     return {
-      containerRef,
+      containerRef
     };
-  },
+  }
 });
 </script>

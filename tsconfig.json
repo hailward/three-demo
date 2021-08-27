@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
+    "noEmit": true,
     "allowJs": true,
     "resolveJsonModule": true,
-    "outDir": "/",
     "baseUrl": ".",
     "paths": {
       "@/*": [

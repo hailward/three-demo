@@ -29,6 +29,6 @@ export const createInstances = (container, showGrid = true) => {
   return {
     scene,
     camera,
-    renderer,
+    renderer
   };
 };
