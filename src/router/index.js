@@ -4,6 +4,8 @@ import Geometry from "@/pages/geometry/index.vue";
 import * as Geometries from "@/pages/geometry/children";
 import Helper from "@/pages/helper/index.vue";
 import * as Helpers from "@/pages/helper/children";
+import Example from "@/pages/examples/index.vue";
+import * as Examples from "@/pages/examples/children";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -164,6 +166,23 @@ const router = createRouter({
           path: "point-light",
           name: "点光源辅助对象(PointLight)",
           component: Helpers.PointLight
+        }
+      ]
+    },
+    {
+      path: "/example",
+      name: "实例(Example)",
+      component: Example,
+      children: [
+        {
+          path: "olympic",
+          name: "冬奥会",
+          component: Examples.Olympic
+        },
+        {
+          path: "shadow",
+          name: "阴影",
+          component: Examples.Shadow
         }
       ]
     }

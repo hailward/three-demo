@@ -30,13 +30,7 @@
 </template>
 
 <script>
-import {
-  ref,
-  shallowRef,
-  onMounted,
-  defineComponent,
-  onBeforeUnmount
-} from "vue";
+import { ref, onMounted, defineComponent, onBeforeUnmount } from "vue";
 import * as THREE from "three";
 import FontJSON from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -49,21 +43,21 @@ export default defineComponent({
   },
   setup() {
     const containerRef = ref(null);
-    const instanceRef = shallowRef({
-      scene: null,
-      camera: null,
-      renderer: null
-    });
+    let container;
+    let scene, camera, renderer;
+    let controls;
+    let stats;
+    let interupt;
     const cameraRef = ref({
       position: { x: 0, y: 0, z: 0 },
       rotation: { x: 0, y: 0, z: 0 }
     });
     // initialize scene/camera/renderer
-    const initInstances = () => {
-      const container = containerRef.value;
+    const init = () => {
+      container = containerRef.value;
       const { offsetWidth, offsetHeight } = container;
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(
         75,
         offsetWidth / offsetHeight,
         0.1,
@@ -71,21 +65,12 @@ export default defineComponent({
       );
       camera.position.set(0, 50, 100);
       camera.lookAt(0, 0, 0);
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      cameraRef.value = { ...camera };
+      renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(offsetWidth, offsetHeight);
       renderer.setClearColor(0x222842, 1);
       container.appendChild(renderer.domElement);
-      instanceRef.value = { scene, camera, renderer };
-      interuptRef.value = false;
-      cameraRef.value = { ...camera };
-      window.scene = scene;
-      window.camera = camera;
-      window.renderer = renderer;
-    };
-    // initialize controls
-    const initControls = () => {
-      const { camera, renderer } = instanceRef.value;
-      const controls = new OrbitControls(camera, renderer.domElement);
+      controls = new OrbitControls(camera, renderer.domElement);
       controls.addEventListener("change", () => {
         cameraRef.value = { ...camera };
       });
@@ -119,7 +104,6 @@ export default defineComponent({
     };
     // initialize renferences
     const initReferences = () => {
-      const { scene } = instanceRef.value;
       const gridWidth = 100;
       const grid = new THREE.GridHelper(gridWidth, 10);
       scene.add(grid);
@@ -180,52 +164,38 @@ export default defineComponent({
       wrappedTextZ.rotation.x = -Math.PI / 2;
       scene.add(textX, textY, wrappedTextZ);
     };
-    // initialize stats
-    const statsRef = shallowRef(null);
     const initStats = () => {
-      const stats = new Stats();
+      stats = new Stats();
       stats.showPanel(0);
       document.body.appendChild(stats.dom);
       stats.dom.style.left = "unset";
       stats.dom.style.right = 0;
-      statsRef.value = stats;
-    };
-    // render
-    const render = () => {
-      const stats = statsRef.value;
-      stats.begin();
-      const { scene, camera, renderer } = instanceRef.value;
-      renderer.render(scene, camera);
-      stats.end();
     };
     // loop update
-    const interuptRef = ref(false);
     const update = () => {
-      const interupt = interuptRef.value;
       if (interupt) return;
+      stats.begin();
+      renderer.render(scene, camera);
+      stats.end();
       requestAnimationFrame(update);
-      render();
     };
     const handleResize = () => {
       const container = containerRef.value;
       const { offsetWidth, offsetHeight } = container;
-      const { camera, renderer } = instanceRef.value;
       camera.aspect = offsetWidth / offsetHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(offsetWidth, offsetHeight);
     };
     onMounted(() => {
-      initInstances();
-      initControls();
+      init();
       initReferences();
       initStats();
       update();
       window.addEventListener("resize", handleResize);
       onBeforeUnmount(() => {
-        interuptRef.value = true;
-        window.removeEventListener("resize", handleResize);
-        const stats = statsRef.value;
+        interupt = true;
         document.body.removeChild(stats.dom);
+        window.removeEventListener("resize", handleResize);
       });
     });
     return {
